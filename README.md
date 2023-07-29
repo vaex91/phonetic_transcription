@@ -2,13 +2,11 @@ This basic tool uses the dictionary api (https://api.dictionaryapi.dev/api/v2/) 
 
 1. Installation
 
-a. Make sure you have python3.9 installed
-b. Use the env attached in the repo via 
-source ./python_env/bin/activate
+pip install -r requirements.txt
 
 2. Usage
 Simply run the script with:
-python3 script.py "Text I want to to be transcribed"
+python3 pronunciations "Text I want to to be transcribed" and it will print the output
 
 2. To do:
 - Support inserting files with text in order to produce entire output files for IPA 
