@@ -3,6 +3,7 @@
 Tool that helps in fonetic transcription. Enter a text and it will transcribe it automatically without considering the weak forms.
 '''
 import requests
+import re
 import nltk
 # Download nltk resources (if not already downloaded)
 nltk.download('punkt')
@@ -24,7 +25,8 @@ if get_data.status_code == 200:
     store_data = get_data.json()
     phonetics_string = store_data[0]['phonetics']
     phonetic_transcription = phonetics_string[1]['text']
-   
+elif get_data.status_code == 404:
+    print('Sorry, word not found.')   
 else: 
     print(f'API request failed with status code {get_data.status_code}')
 
