@@ -16,10 +16,11 @@ def punctuation_removal(raw_input):
     return words_without_punctuation
 
 
-final_phonetic_transcription = ''
+final_phonetic_transcription = '/ '
 
 # TODO: fix the edgecase 'i'; eventually find a better way to search for 'phonetic' key
-# TODO: implement regex to remove the '/' and 
+# TODO: consider apostrophes
+
 for word in punctuation_removal(raw_input):
     get_data = requests.get(f'https://api.dictionaryapi.dev/api/v2/entries/en/{word}')
     if get_data.status_code == 200:
@@ -30,11 +31,13 @@ for word in punctuation_removal(raw_input):
             phonetic_transcription = phonetics_string[1]['text']
         except IndexError:
             phonetic_transcription = store_data[0]['phonetic']
-        finally: 
-            final_phonetic_transcription = final_phonetic_transcription + phonetic_transcription + ' '
+        finally:
+            escape_char = re.escape('/') 
+            final_phonetic_transcription = final_phonetic_transcription + re.sub(escape_char, '', phonetic_transcription) + ' '
     elif get_data.status_code == 404:
-        print('Sorry, word not found.')   
+        print(f'Sorry, word "{word}" not found.')   
     else: 
         print(f'API request failed with status code {get_data.status_code}')
 
+final_phonetic_transcription = final_phonetic_transcription + '/'
 print(final_phonetic_transcription)
