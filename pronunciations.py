@@ -11,7 +11,7 @@ nltk.download('punkt')
 raw_input = input("Please insert the word in English that you want to be transcribed!\n")
 
 def punctuation_removal(raw_input):
-    tokenizer = nltk.RegexpTokenizer(r'\w+')
+    tokenizer = nltk.RegexpTokenizer(r"\b\w+(?:'\w+)?\b")
     words_without_punctuation = tokenizer.tokenize(raw_input.lower())
     return words_without_punctuation
 
