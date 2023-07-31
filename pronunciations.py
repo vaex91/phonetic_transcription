@@ -1,6 +1,6 @@
 
 '''
-Tool that helps in fonetic transcription. Enter a text and it will transcribe it automatically without considering the weak forms.
+Tool that helps in phonetic transcription. Enter a text and it will transcribe it automatically without considering the weak forms.
 '''
 import requests
 import re
