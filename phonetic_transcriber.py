@@ -8,9 +8,6 @@ import nltk
 import argparse
 from pathlib import Path
 
-# Download nltk resources (if not already downloaded)
-nltk.download('punkt')
-
 # TODO: implement -i as user input for text files and -o as user output (as a .txt file)
 # TODO: implement a loading bar that would take a total number of words and show the speed and eta
 # TODO: eventually more object-oriented to speed up the script; store the already fetched data 
@@ -20,31 +17,32 @@ def arg_parse():
         prog='phonetic_transcriber.py',
         description='Tool that helps in phonetic transcription. Enter a text or a file as input (-i) and it will transcribe it automatically without considering the weak forms.')
     parser.add_argument("-input", "-i", type=Path, required=False, help="Type in the path to the file that you want to transcribe; i.e.: -i ~/my_text.txt")
-    global args
     args = parser.parse_args()
-
+    
     if args.input:
         print(f'File path provided: {args.input}, processing...')
+        return args
     else:
         print('No file path provided. Proceeding with typed text.')
 
 def file_reader(text_file) -> str:
-    read_file = open(text_file, 'r')
-    return read_file.readline()
+    with open(text_file, 'r') as read_file:
+        content = read_file.read()
+        return content
 
-def punctuation_removal(raw_input) -> list:
+def punctuation_removal(input) -> list:
     tokenizer = nltk.RegexpTokenizer(r"\b\w+(?:'\w+)?\b")
-    words_without_punctuation = tokenizer.tokenize(raw_input.lower())
+    words_without_punctuation = tokenizer.tokenize(input.lower())
     return words_without_punctuation
 
 def transcribe():
+    args = arg_parse()
     # Check if file has been inserted
-    if args.input == None:
+    if args == None:
         raw_input = input("Please insert the word in English that you want to be transcribed!\n")
-    elif args.input == Path:
-        text_file = Path(args).expanduser()
-        text_input = file_reader(text_file)
-        print(text_input)
+    else:
+        text_file = args.input.expanduser()
+        raw_input = file_reader(text_file)
 
     final_phonetic_transcription = '/ '
      
@@ -52,7 +50,7 @@ def transcribe():
     # TODO: apply json for better script management
 
     for word in punctuation_removal(raw_input):
-        get_data = requests.get(f'https://api.dictionaryapi.dev/api/v2/entries/en/{word}')
+        get_data = requests.get(f'{dictionary_url}{word}')
         if get_data.status_code == 200:
             store_data = get_data.json()
             # different methods to find the phonetic transcription in the generated .json
@@ -73,5 +71,7 @@ def transcribe():
     print(final_phonetic_transcription)
 
 if __name__ == '__main__':
-    arg_parse()
+# Download nltk resources (if not already downloaded)
+    nltk.download('punkt')
+    dictionary_url = 'https://api.dictionaryapi.dev/api/v2/entries/en/'
     transcribe()
