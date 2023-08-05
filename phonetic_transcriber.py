@@ -70,6 +70,33 @@ def transcribe():
     final_phonetic_transcription += '/'
     print(final_phonetic_transcription)
 
+# add X-SAMPA dictionary for its later conversion
+    x_sampa = {
+        "ɪ": "I",
+        "æ": "{",
+        "ʌ": "V",
+        "ə": "@",
+        "ɜ": "E",
+        "ɑ": "A",
+        "ɒ": "Q",
+        "ɔ": "O",
+        "ʊ": "U",
+        "θ": "T",
+        "ð": "D",
+        "ʃ": "S",
+        "ʒ": "Z",
+        "ŋ": "N"
+    }
+
+    final_phonetic_transcription_x_sampa = ''
+    for character in final_phonetic_transcription:
+        if character in x_sampa:
+            character = x_sampa[character]
+            final_phonetic_transcription_x_sampa += character
+        else:
+            final_phonetic_transcription_x_sampa += character 
+    print(final_phonetic_transcription_x_sampa)
+
 if __name__ == '__main__':
 # Download nltk resources (if not already downloaded)
     nltk.download('punkt')
