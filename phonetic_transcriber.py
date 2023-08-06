@@ -45,23 +45,23 @@ def transcribe():
         raw_input = file_reader(text_file)
 
     final_phonetic_transcription = '/ '
-     
+    escape_char = re.escape('/')
     # TODO: fix the edgecase 'i'; eventually find a better way to search for 'phonetic' key
     # TODO: apply json for better script management
+    # TODO: consider applying || and | symbols for full stops and commas
+    clean_input = punctuation_removal(raw_input)
 
-    for word in punctuation_removal(raw_input):
+    for word in clean_input:
         get_data = requests.get(f'{dictionary_url}{word}')
         if get_data.status_code == 200:
             store_data = get_data.json()
-            # different methods to find the phonetic transcription in the generated .json
-            try:
-                phonetics_string = store_data[0]['phonetics']
-                phonetic_transcription = phonetics_string[1]['text']
-            except IndexError:
-                phonetic_transcription = store_data[0]['phonetic']
-            finally:
-                escape_char = re.escape('/') 
-                final_phonetic_transcription = final_phonetic_transcription + re.sub(escape_char, '', phonetic_transcription) + ' '
+            # use a nested loop to find the item in the json file
+            for substring in store_data:
+                for category in substring:
+                    if category == 'phonetic':
+                        final_phonetic_transcription = final_phonetic_transcription + re.sub(escape_char, '', substring[category]) + ' '
+                        break
+                break
         elif get_data.status_code == 404:
             print(f'Sorry, word "{word}" not found.')   
         else: 
